@@ -1,0 +1,59 @@
+import random
+import re
+import sys
+
+# set starting lives
+livesRemaining = 7
+
+# read words from the file
+words = []
+with open('word_list.txt', 'r') as f:
+    for line in f:
+        words.append(line.strip())
+
+# pick a random word (random distribution)
+wordToGuess = random.choice(words)
+
+# create masked word (**)
+maskedWord = re.sub('\w', '*', wordToGuess)
+
+# on a loop....
+while True:
+    # present masked word
+    print(str.format("You have {0} lives left:", livesRemaining), maskedWord)
+    # ask for letter
+    print("Please enter your next guess: ")
+    guess = sys.stdin.readline()[0]
+
+    # if letter within word, reveal letters within word
+    if guess in wordToGuess:
+        for idx in range( len(maskedWord) ):
+            if wordToGuess[idx] == guess:
+                maskedWord = maskedWord[:idx] + guess + maskedWord[idx + 1:]
+    else:
+        # else, deduct one life
+        print("Incorrect guess!")
+        livesRemaining = livesRemaining - 1
+
+    print("") # spacer
+
+    # check for win/lose condition
+    if maskedWord == wordToGuess or livesRemaining == 0:
+        break
+
+print("The word was:", wordToGuess)
+
+# declare win/lose
+if maskedWord == wordToGuess:
+    print("Congratulations you win")
+else:
+    print("You lose")
+   
+   
+#Feedback: PASS.
+# A succinct piece of code that meets the criteria. A few pointers for taking your coding forwards:
+# - Have a look at what 'if __name__ == "__main__"'does. It is really important when dealing with multiple files
+# - Try using an object oriented style - breaking your code up into functions makes code easier to use
+# - Try to avoid 'while True' loops. In more complex scenarios it is very easy to miss something that should cause the loop to break and this can cause devices to freeze or even crash
+# - Whenever you take user input you should validate it - in this case have they actually given you a single alphabetic character? Have they guessed it before?
+# - Include error handling for if anything you rely on is missing - e.g. if the file of words isn't there
